@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TServer", "TServer\TServer.csproj", "{57C4BDF3-96CA-41B7-A7B1-43306B6D9D1E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TServer.Common", "TServer.Common\TServer.Common.csproj", "{A2EF06A2-4F0C-4B86-B42D-EF76A39D6434}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{57C4BDF3-96CA-41B7-A7B1-43306B6D9D1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{57C4BDF3-96CA-41B7-A7B1-43306B6D9D1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{57C4BDF3-96CA-41B7-A7B1-43306B6D9D1E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2EF06A2-4F0C-4B86-B42D-EF76A39D6434}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2EF06A2-4F0C-4B86-B42D-EF76A39D6434}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2EF06A2-4F0C-4B86-B42D-EF76A39D6434}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2EF06A2-4F0C-4B86-B42D-EF76A39D6434}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

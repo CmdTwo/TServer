@@ -10,6 +10,9 @@ namespace TServer
     {
         static void Main(string[] args)
         {
+            Server server = new Server("192.168.100.4", 25252);
+            server.Launch();
+            Console.ReadKey();
         }
     }
 }
