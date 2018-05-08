@@ -12,6 +12,8 @@ namespace TServer.Common
         GetPartOfProfileResponse = 2,
         GetGroupListResponse = 3,
         GetColorListResponse = 4,
-        GetSubgroupListResponse = 5
+        GetSubgroupListResponse = 5,
+        GetUserListResponse = 6,
+        GetTagListResponse = 7
     }
 }

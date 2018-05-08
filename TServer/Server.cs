@@ -36,16 +36,8 @@ namespace TServer
             Listener.Start();
 
             Log.OpenLog();
-            Log.Write("Launch Server\r\nIP: " + ServerIP + " \r\nPort: " + ServerPort);
-
-            Console.WriteLine("\nIP: " + ServerIP + "\nPort: " + ServerPort + "\n\n");
+            Log.Write("Server started! IP: " + ServerIP + ":" + ServerPort);            
             BeginAccept();
-        }
-
-        public void BeginRead(TClient client, IAsyncResult ar)
-        {
-            StateObject state = new StateObject() { WorkSocket = client.TcpClient };
-            client.TcpClient.GetStream().BeginRead(state.Buffer, 0, StateObject.BufferSize, new AsyncCallback(client.ReadCallback), state);
         }
 
         private void BeginAccept()
@@ -66,12 +58,18 @@ namespace TServer
         private void AcceptCallback(IAsyncResult ar)
         {
             AllDone.Set();
-
+            Log.Write("New user connected!");
             TcpListener listener = (TcpListener)ar.AsyncState;
             TClient newClient;
             ClientsList.Add(newClient = new TClient(listener.EndAcceptTcpClient(ar), DBManager, this));
             BeginRead(newClient, ar);
         }
-
+        
+        public void BeginRead(TClient client, IAsyncResult ar)
+        {
+            StateObject state = new StateObject() { WorkSocket = client.TcpClient };
+            Log.Write("Begin read...");
+            client.TcpClient.GetStream().BeginRead(state.Buffer, 0, StateObject.BufferSize, new AsyncCallback(client.ReadCallback), state);
+        }
     }
 }

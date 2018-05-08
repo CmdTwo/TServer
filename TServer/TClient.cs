@@ -35,16 +35,32 @@ namespace TServer
                     switch ((byte)message[ReceiveMessageParam.CommandType])
                     {
                         case ((byte)RequestCommand.Authorization):
+                            Log.Write("New request: " + RequestCommand.Authorization);
                             Request_Authorization(message[ReceiveMessageParam.Params] as Dictionary<ParameterType, object>);
                             break;
                         case ((byte)RequestCommand.GetPartOfProfile):
+                            Log.Write("New request: " + RequestCommand.GetPartOfProfile);
                             Request_GetPartOfProfile(message[ReceiveMessageParam.Params] as Dictionary<ParameterType, object>);
                             break;
                         case ((byte)RequestCommand.GetGroupList):
+                            Log.Write("New request: " + RequestCommand.GetGroupList);
                             Request_GetGroupList(message[ReceiveMessageParam.Params] as Dictionary<ParameterType, object>);
                             break;
                         case ((byte)RequestCommand.GetColorList):
+                            Log.Write("New request: " + RequestCommand.GetColorList);
                             Request_GetColorList(message[ReceiveMessageParam.Params] as Dictionary<ParameterType, object>);
+                            break;
+                        case ((byte)RequestCommand.GetSubgroupList):
+                            Log.Write("New request: " + RequestCommand.GetSubgroupList);
+                            Request_GetSubgroupList(message[ReceiveMessageParam.Params] as Dictionary<ParameterType, object>);
+                            break;
+                        case ((byte)RequestCommand.GetUserList):
+                            Log.Write("New request: " + RequestCommand.GetUserList);
+                            Request_GetUserList(message[ReceiveMessageParam.Params] as Dictionary<ParameterType, object>);
+                            break;
+                        case ((byte)RequestCommand.GetTagList):
+                            Log.Write("New request: " + RequestCommand.GetTagList);
+                            Request_GetTagList(message[ReceiveMessageParam.Params] as Dictionary<ParameterType, object>);
                             break;
                     }
                 }
@@ -52,7 +68,7 @@ namespace TServer
                 {
                     //switch ((byte)message[ReceiveMessageParam.CommandType])
                     //{
-                    //    case ((byte)ResponseCommand.AuthorizationResponse):
+                    //    case ((byte)ResponseCommand.AutorizationResponse):
                     //        AuthorizationResponse(message[ReceiveMessageParam.Params] as Dictionary<ParameterType, object>);
                     //        break;
                     //}
@@ -73,7 +89,7 @@ namespace TServer
                                 { ParameterType.authorized, returnArgs[0] } } } };
 
             if (returnArgs[1] != null)
-                ProfileID = (int)returnArgs[1];
+                ProfileID = Convert.ToInt32(returnArgs[1]);
 
             MessageManager messageManager = new MessageManager();
             byte[] bytes = messageManager.SerializeMessage(response);
@@ -123,13 +139,39 @@ namespace TServer
             TcpClient.GetStream().Write(bytes, 0, bytes.Length);
         }
 
-        private void Request_GetSubGroupList(Dictionary<ParameterType, object> args)
+        private void Request_GetSubgroupList(Dictionary<ParameterType, object> args)
         {
             Dictionary<ReceiveMessageParam, object> response = new Dictionary<ReceiveMessageParam, object>() {
                             { ReceiveMessageParam.CommandType, ResponseCommand.GetSubgroupListResponse },
                             { ReceiveMessageParam.IsRequest, false },
                             { ReceiveMessageParam.Params, new Dictionary<ParameterType, object> {
                                 { ParameterType.subgroupsList, DBManager.GetSubgroupList((int)args[ParameterType.groupID]) } } } };
+
+            MessageManager messageManager = new MessageManager();
+            byte[] bytes = messageManager.SerializeMessage(response);
+            TcpClient.GetStream().Write(bytes, 0, bytes.Length);
+        }
+
+        private void Request_GetUserList(Dictionary<ParameterType, object> args)
+        {
+            Dictionary<ReceiveMessageParam, object> response = new Dictionary<ReceiveMessageParam, object>() {
+                            { ReceiveMessageParam.CommandType, ResponseCommand.GetUserListResponse },
+                            { ReceiveMessageParam.IsRequest, false },
+                            { ReceiveMessageParam.Params, new Dictionary<ParameterType, object> {
+                                { ParameterType.usersList, DBManager.GetUsersList(ProfileID) } } } };
+
+            MessageManager messageManager = new MessageManager();
+            byte[] bytes = messageManager.SerializeMessage(response);
+            TcpClient.GetStream().Write(bytes, 0, bytes.Length);
+        }
+
+        private void Request_GetTagList(Dictionary<ParameterType, object> args)
+        {
+            Dictionary<ReceiveMessageParam, object> response = new Dictionary<ReceiveMessageParam, object>() {
+                            { ReceiveMessageParam.CommandType, ResponseCommand.GetTagListResponse },
+                            { ReceiveMessageParam.IsRequest, false },
+                            { ReceiveMessageParam.Params, new Dictionary<ParameterType, object> {
+                                { ParameterType.tagList, DBManager.GetTagList() } } } };
 
             MessageManager messageManager = new MessageManager();
             byte[] bytes = messageManager.SerializeMessage(response);

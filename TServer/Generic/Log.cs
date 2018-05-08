@@ -19,7 +19,11 @@ namespace TServer.Generic
 
         public static void Write(string LogMessage)
         {
-            LogMessage += "\r\n + " + DateTime.Now + "\r\n";
+            Console.Write(LogMessage + " | ");
+            Console.ForegroundColor = ConsoleColor.DarkCyan;
+            Console.Write(DateTime.Now + "\n");
+            Console.ResetColor();
+
             LogFile.Write(LogMessage);
         }
 

@@ -13,5 +13,7 @@ namespace TServer.Common
         GetGroupList = 3,
         GetColorList = 4,
         GetSubgroupList = 5,
+        GetUserList = 6,
+        GetTagList = 7
     }
 }

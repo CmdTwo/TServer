@@ -15,6 +15,8 @@ namespace TServer.Common
         groupsList = 5,
         profileID = 6,
         subgroupsList = 7,
-        groupID = 8
+        groupID = 8,
+        usersList = 9,
+        tagList = 10
     }
 }
