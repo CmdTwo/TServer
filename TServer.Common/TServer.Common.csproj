@@ -16,7 +16,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>E:\SaveHDD\Testlo\</OutputPath>
+    <OutputPath>..\..\Testlo\Testlo\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -40,6 +40,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Content\Access.cs" />
+    <Compile Include="Content\Answer.cs" />
+    <Compile Include="Content\ContentParam.cs" />
+    <Compile Include="Content\Evaluation.cs" />
+    <Compile Include="Content\IContent.cs" />
+    <Compile Include="Content\Profile.cs" />
+    <Compile Include="Content\Question.cs" />
+    <Compile Include="Content\Result.cs" />
+    <Compile Include="Content\SubAccess.cs" />
+    <Compile Include="Content\Tag.cs" />
+    <Compile Include="Content\Test.cs" />
+    <Compile Include="ErrorParam.cs" />
     <Compile Include="RequestCommand.cs" />
     <Compile Include="ParameterType.cs" />
     <Compile Include="MessageManager.cs" />

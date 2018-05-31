@@ -10,8 +10,10 @@ namespace TServer
     {
         static void Main(string[] args)
         {
-            Server server = new Server("192.168.100.3", 25252);
+            Server server = new Server(Server.FindMyIp(), 25252);
             server.Launch();
+
+            //ServerConsole serverConsole = new ServerConsole();
             Console.ReadKey();
         }
     }

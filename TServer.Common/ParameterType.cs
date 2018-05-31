@@ -12,11 +12,18 @@ namespace TServer.Common
         password = 2,
         authorized = 3,
         name = 4,
-        groupsList = 5,
+        availableAccessList = 5,
         profileID = 6,
-        subgroupsList = 7,
+        availableSubAccessList = 7,
         groupID = 8,
         usersList = 9,
-        tagList = 10
+        tagList = 10,
+        newTest = 11,
+        responseStatus = 12,
+        availableTests = 13,
+        failedTests = 14,
+        complitedTests = 15,
+        test = 16,
+        testID = 17
     }
 }

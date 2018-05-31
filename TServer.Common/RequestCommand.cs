@@ -10,10 +10,15 @@ namespace TServer.Common
     {
         Authorization = 1,
         GetPartOfProfile = 2,
-        GetGroupList = 3,
-        GetColorList = 4,
-        GetSubgroupList = 5,
-        GetUserList = 6,
-        GetTagList = 7
+        GetAvailableAccessList = 3,
+        GetAvailableSubgroupList = 4,
+        GetUserList = 5,
+        GetTagList = 6,
+        AddNewTest = 7,
+        GetAvailableTests = 8,
+        GetFailedTests = 9,
+        GetComplitedTests = 10,
+        GetTest = 11,
+        UserCompliteTest
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Sockets;
 using TServer.Generic;
 using TServer.Common;
+using TServer.Common.Content;
 
 namespace TServer
 {
@@ -42,17 +43,13 @@ namespace TServer
                             Log.Write("New request: " + RequestCommand.GetPartOfProfile);
                             Request_GetPartOfProfile(message[ReceiveMessageParam.Params] as Dictionary<ParameterType, object>);
                             break;
-                        case ((byte)RequestCommand.GetGroupList):
-                            Log.Write("New request: " + RequestCommand.GetGroupList);
-                            Request_GetGroupList(message[ReceiveMessageParam.Params] as Dictionary<ParameterType, object>);
+                        case ((byte)RequestCommand.GetAvailableAccessList):
+                            Log.Write("New request: " + RequestCommand.GetAvailableAccessList);
+                            Request_GetAvailableAccessList(message[ReceiveMessageParam.Params] as Dictionary<ParameterType, object>);
                             break;
-                        case ((byte)RequestCommand.GetColorList):
-                            Log.Write("New request: " + RequestCommand.GetColorList);
-                            Request_GetColorList(message[ReceiveMessageParam.Params] as Dictionary<ParameterType, object>);
-                            break;
-                        case ((byte)RequestCommand.GetSubgroupList):
-                            Log.Write("New request: " + RequestCommand.GetSubgroupList);
-                            Request_GetSubgroupList(message[ReceiveMessageParam.Params] as Dictionary<ParameterType, object>);
+                        case ((byte)RequestCommand.GetAvailableSubgroupList):
+                            Log.Write("New request: " + RequestCommand.GetAvailableSubgroupList);
+                            Request_GetAvailableSubgroupList(message[ReceiveMessageParam.Params] as Dictionary<ParameterType, object>);
                             break;
                         case ((byte)RequestCommand.GetUserList):
                             Log.Write("New request: " + RequestCommand.GetUserList);
@@ -61,6 +58,26 @@ namespace TServer
                         case ((byte)RequestCommand.GetTagList):
                             Log.Write("New request: " + RequestCommand.GetTagList);
                             Request_GetTagList(message[ReceiveMessageParam.Params] as Dictionary<ParameterType, object>);
+                            break;
+                        case ((byte)RequestCommand.AddNewTest):
+                            Log.Write("New request: " + RequestCommand.AddNewTest);
+                            Request_AddNewTest(message[ReceiveMessageParam.Params] as Dictionary<ParameterType, object>);
+                            break;
+                        case ((byte)RequestCommand.GetAvailableTests):
+                            Log.Write("New request: " + RequestCommand.GetAvailableTests);
+                            Request_GetAvailableTests(message[ReceiveMessageParam.Params] as Dictionary<ParameterType, object>);
+                            break;
+                        case ((byte)RequestCommand.GetFailedTests):
+                            Log.Write("New request: " + RequestCommand.GetFailedTests);
+                            Request_GetFailedTests(message[ReceiveMessageParam.Params] as Dictionary<ParameterType, object>);
+                            break;
+                        case ((byte)RequestCommand.GetComplitedTests):
+                            Log.Write("New request: " + RequestCommand.GetComplitedTests);
+                            Request_GetComplitedTests(message[ReceiveMessageParam.Params] as Dictionary<ParameterType, object>);
+                            break;
+                        case ((byte)RequestCommand.GetTest):
+                            Log.Write("New request: " + RequestCommand.GetTest);
+                            Request_GetTest(message[ReceiveMessageParam.Params] as Dictionary<ParameterType, object>);
                             break;
                     }
                 }
@@ -113,13 +130,13 @@ namespace TServer
             ////// ELSE - FIX IN FUTURE
         }
 
-        private void Request_GetGroupList(Dictionary<ParameterType, object> args)
+        private void Request_GetAvailableAccessList(Dictionary<ParameterType, object> args)
         {
             Dictionary<ReceiveMessageParam, object> response = new Dictionary<ReceiveMessageParam, object>() {
-                            { ReceiveMessageParam.CommandType, ResponseCommand.GetGroupListResponse },
+                            { ReceiveMessageParam.CommandType, ResponseCommand.GetAvailableAccessListResponse },
                             { ReceiveMessageParam.IsRequest, false },
                             { ReceiveMessageParam.Params, new Dictionary<ParameterType, object> {
-                                { ParameterType.groupsList, DBManager.GetGroupsList(ProfileID) } } } };
+                                { ParameterType.availableAccessList, DBManager.GetAvailableAccessList(ProfileID) } } } };
 
             MessageManager messageManager = new MessageManager();
             byte[] bytes = messageManager.SerializeMessage(response);
@@ -128,24 +145,24 @@ namespace TServer
 
         private void Request_GetColorList(Dictionary<ParameterType, object> args)
         {
-            Dictionary<ReceiveMessageParam, object> response = new Dictionary<ReceiveMessageParam, object>() {
-                            { ReceiveMessageParam.CommandType, ResponseCommand.GetColorListResponse },
-                            { ReceiveMessageParam.IsRequest, false },
-                            { ReceiveMessageParam.Params, new Dictionary<ParameterType, object> {
-                                { ParameterType.groupsList, DBManager.GetColorList() } } } };
+            //Dictionary<ReceiveMessageParam, object> response = new Dictionary<ReceiveMessageParam, object>() {
+            //                { ReceiveMessageParam.CommandType, ResponseCommand.GetColorListResponse },
+            //                { ReceiveMessageParam.IsRequest, false },
+            //                { ReceiveMessageParam.Params, new Dictionary<ParameterType, object> {
+            //                    { ParameterType.availableAccessList, DBManager.GetColorList() } } } };
 
-            MessageManager messageManager = new MessageManager();
-            byte[] bytes = messageManager.SerializeMessage(response);
-            TcpClient.GetStream().Write(bytes, 0, bytes.Length);
+            //MessageManager messageManager = new MessageManager();
+            //byte[] bytes = messageManager.SerializeMessage(response);
+            //TcpClient.GetStream().Write(bytes, 0, bytes.Length);
         }
 
-        private void Request_GetSubgroupList(Dictionary<ParameterType, object> args)
+        private void Request_GetAvailableSubgroupList(Dictionary<ParameterType, object> args)
         {
             Dictionary<ReceiveMessageParam, object> response = new Dictionary<ReceiveMessageParam, object>() {
-                            { ReceiveMessageParam.CommandType, ResponseCommand.GetSubgroupListResponse },
+                            { ReceiveMessageParam.CommandType, ResponseCommand.GetAvailableSubgroupListResponse },
                             { ReceiveMessageParam.IsRequest, false },
                             { ReceiveMessageParam.Params, new Dictionary<ParameterType, object> {
-                                { ParameterType.subgroupsList, DBManager.GetSubgroupList((int)args[ParameterType.groupID]) } } } };
+                                { ParameterType.availableSubAccessList, DBManager.GetAvailableSubgroupList((int)args[ParameterType.groupID]) } } } };
 
             MessageManager messageManager = new MessageManager();
             byte[] bytes = messageManager.SerializeMessage(response);
@@ -172,6 +189,71 @@ namespace TServer
                             { ReceiveMessageParam.IsRequest, false },
                             { ReceiveMessageParam.Params, new Dictionary<ParameterType, object> {
                                 { ParameterType.tagList, DBManager.GetTagList() } } } };
+
+            MessageManager messageManager = new MessageManager();
+            byte[] bytes = messageManager.SerializeMessage(response);
+            TcpClient.GetStream().Write(bytes, 0, bytes.Length);
+        }
+
+        private void Request_AddNewTest(Dictionary<ParameterType, object> args)
+        {
+            Dictionary<ReceiveMessageParam, object> response = new Dictionary<ReceiveMessageParam, object>() {
+                            { ReceiveMessageParam.CommandType, ResponseCommand.AddNewTestResponse },
+                            { ReceiveMessageParam.IsRequest, false },
+                            { ReceiveMessageParam.Params, new Dictionary<ParameterType, object> {
+                                { ParameterType.responseStatus, DBManager.AddNewTest((Test)args[ParameterType.newTest], ProfileID) } } } };
+
+            MessageManager messageManager = new MessageManager();
+            byte[] bytes = messageManager.SerializeMessage(response);
+            TcpClient.GetStream().Write(bytes, 0, bytes.Length);
+        }
+
+        private void Request_GetAvailableTests(Dictionary<ParameterType, object> args)
+        {
+            Dictionary<ReceiveMessageParam, object> response = new Dictionary<ReceiveMessageParam, object>() {
+                            { ReceiveMessageParam.CommandType, ResponseCommand.GetAvailableTestsResponse },
+                            { ReceiveMessageParam.IsRequest, false },
+                            { ReceiveMessageParam.Params, new Dictionary<ParameterType, object> {
+                                { ParameterType.responseStatus, DBManager.GetAvailableTests(ProfileID) } } } };
+
+            MessageManager messageManager = new MessageManager();
+            byte[] bytes = messageManager.SerializeMessage(response);
+            TcpClient.GetStream().Write(bytes, 0, bytes.Length);
+        }
+
+        private void Request_GetFailedTests(Dictionary<ParameterType, object> args)
+        {
+            Dictionary<ReceiveMessageParam, object> response = new Dictionary<ReceiveMessageParam, object>() {
+                            { ReceiveMessageParam.CommandType, ResponseCommand.GetFailedTestsResponse },
+                            { ReceiveMessageParam.IsRequest, false },
+                            { ReceiveMessageParam.Params, new Dictionary<ParameterType, object> {
+                                { ParameterType.responseStatus, DBManager.GetFailedTests(ProfileID) } } } };
+
+            MessageManager messageManager = new MessageManager();
+            byte[] bytes = messageManager.SerializeMessage(response);
+            TcpClient.GetStream().Write(bytes, 0, bytes.Length);
+        }
+
+        private void Request_GetComplitedTests(Dictionary<ParameterType, object> args)
+        {
+            Dictionary<ReceiveMessageParam, object> response = new Dictionary<ReceiveMessageParam, object>() {
+                            { ReceiveMessageParam.CommandType, ResponseCommand.GetComplitedTestsResponse },
+                            { ReceiveMessageParam.IsRequest, false },
+                            { ReceiveMessageParam.Params, new Dictionary<ParameterType, object> {
+                                { ParameterType.responseStatus, DBManager.GetComplitedTests(ProfileID) } } } };
+
+            MessageManager messageManager = new MessageManager();
+            byte[] bytes = messageManager.SerializeMessage(response);
+            TcpClient.GetStream().Write(bytes, 0, bytes.Length);
+        }
+
+        private void Request_GetTest(Dictionary<ParameterType, object> args)
+        {
+            Dictionary<ReceiveMessageParam, object> response = new Dictionary<ReceiveMessageParam, object>() {
+                            { ReceiveMessageParam.CommandType, ResponseCommand.GetTestResponse },
+                            { ReceiveMessageParam.IsRequest, false },
+                            { ReceiveMessageParam.Params, new Dictionary<ParameterType, object> {
+                                { ParameterType.test, DBManager.GetTest((int)args[ParameterType.testID]) } } } };
 
             MessageManager messageManager = new MessageManager();
             byte[] bytes = messageManager.SerializeMessage(response);

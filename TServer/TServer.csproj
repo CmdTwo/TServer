@@ -86,6 +86,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="Server.cs" />
+    <Compile Include="ServerConsole.cs" />
     <Compile Include="TClient.cs" />
   </ItemGroup>
   <ItemGroup>

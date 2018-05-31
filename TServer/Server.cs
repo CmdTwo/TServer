@@ -71,5 +71,14 @@ namespace TServer
             Log.Write("Begin read...");
             client.TcpClient.GetStream().BeginRead(state.Buffer, 0, StateObject.BufferSize, new AsyncCallback(client.ReadCallback), state);
         }
+
+        public static string FindMyIp()
+        {
+            var host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (var ip in host.AddressList)
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                    return ip.ToString();
+            return "0.0.0.0";
+        }
     }
 }
