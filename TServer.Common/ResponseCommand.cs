@@ -18,7 +18,9 @@ namespace TServer.Common
         GetAvailableTestsResponse = 8,
         GetFailedTestsResponse = 9,
         GetComplitedTestsResponse = 10,
-        GetTestResponse = 11
+        GetTestResponse = 11,
+        SaveProgressResponse = 12,
+        UserCompletedTestResponse = 13
 
     }
 }

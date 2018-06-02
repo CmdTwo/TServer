@@ -15,6 +15,11 @@ namespace TServer.Common.Content
         public List<Answer> AnswerList { get; private set; }
         public int QuestionPageTemplate;
 
+        public Question()
+        {
+            AnswerList = new List<Answer>();
+        }
+
         public Question(int id, string header, string question, int questionPageTemplate)
         {
             ID = id;
@@ -43,7 +48,7 @@ namespace TServer.Common.Content
                 case (ContentParam.header):
                     Header = (string)obj;
                     break;
-                case (ContentParam.question):
+                case (ContentParam.questionText):
                     QuestionText = (string)obj;
                     break;
                 case (ContentParam.answerList):

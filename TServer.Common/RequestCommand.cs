@@ -19,6 +19,7 @@ namespace TServer.Common
         GetFailedTests = 9,
         GetComplitedTests = 10,
         GetTest = 11,
-        UserCompliteTest
+        UserCompletedTest = 12,
+        SaveProgress = 13,
     }
 }

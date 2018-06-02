@@ -79,6 +79,14 @@ namespace TServer
                             Log.Write("New request: " + RequestCommand.GetTest);
                             Request_GetTest(message[ReceiveMessageParam.Params] as Dictionary<ParameterType, object>);
                             break;
+                        case ((byte)RequestCommand.SaveProgress):
+                            Log.Write("New request: " + RequestCommand.SaveProgress);
+                            Request_SaveProgress(message[ReceiveMessageParam.Params] as Dictionary<ParameterType, object>);
+                            break;
+                        case ((byte)RequestCommand.UserCompletedTest):
+                            Log.Write("New request: " + RequestCommand.UserCompletedTest);
+                            Request_UserCompletedTest(message[ReceiveMessageParam.Params] as Dictionary<ParameterType, object>);
+                            break;
                     }
                 }
                 else
@@ -254,6 +262,32 @@ namespace TServer
                             { ReceiveMessageParam.IsRequest, false },
                             { ReceiveMessageParam.Params, new Dictionary<ParameterType, object> {
                                 { ParameterType.test, DBManager.GetTest((int)args[ParameterType.testID]) } } } };
+
+            MessageManager messageManager = new MessageManager();
+            byte[] bytes = messageManager.SerializeMessage(response);
+            TcpClient.GetStream().Write(bytes, 0, bytes.Length);
+        }
+
+        private void Request_SaveProgress(Dictionary<ParameterType, object> args)
+        {
+            Dictionary<ReceiveMessageParam, object> response = new Dictionary<ReceiveMessageParam, object>() {
+                            { ReceiveMessageParam.CommandType, ResponseCommand.SaveProgressResponse },
+                            { ReceiveMessageParam.IsRequest, false },
+                            { ReceiveMessageParam.Params, new Dictionary<ParameterType, object> {
+                                { ParameterType.responseStatus, DBManager.SaveProgress((int)args[ParameterType.testID], (double)args[ParameterType.progress_score], (int)args[ParameterType.progress_skip], ProfileID) } } } };
+
+            MessageManager messageManager = new MessageManager();
+            byte[] bytes = messageManager.SerializeMessage(response);
+            TcpClient.GetStream().Write(bytes, 0, bytes.Length);
+        }
+
+        private void Request_UserCompletedTest(Dictionary<ParameterType, object> args)
+        {
+            Dictionary<ReceiveMessageParam, object> response = new Dictionary<ReceiveMessageParam, object>() {
+                            { ReceiveMessageParam.CommandType, ResponseCommand.UserCompletedTestResponse },
+                            { ReceiveMessageParam.IsRequest, false },
+                            { ReceiveMessageParam.Params, new Dictionary<ParameterType, object> {
+                                { ParameterType.responseStatus, DBManager.UserCompletedTest((int)args[ParameterType.testID], (int)args[ParameterType.progress_score], ProfileID, (bool)args[ParameterType.isCompleted]) } } } };
 
             MessageManager messageManager = new MessageManager();
             byte[] bytes = messageManager.SerializeMessage(response);

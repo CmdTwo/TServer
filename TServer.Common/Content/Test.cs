@@ -52,6 +52,11 @@ namespace TServer.Common.Content
             QuestionPageList = questionPages;
         }
 
+        public void RemoveQuestion(Question question)
+        {
+            QuestionPageList.Remove(question);
+        }
+
         public void UpdateField(ContentParam contentParam, object obj)
         {
             switch (contentParam)

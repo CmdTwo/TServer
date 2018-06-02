@@ -19,7 +19,7 @@ namespace TServer.Common.Content
         showAnswerMode = 9,
         questionPageList = 10,
         header = 11,
-        question = 12,
+        questionText = 12,
         answerList = 13,
         questionPageTemplate = 14
 

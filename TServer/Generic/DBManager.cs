@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
+using System.Linq;
 using System.Data.SQLite;
 using TServer.Common.Content;
 
@@ -231,10 +231,10 @@ namespace TServer.Generic
             return true;
         }
 
-        public List<object[]> GetAvailableTests(int profileID)
+        public List<List<object>> GetAvailableTests(int profileID)
         {
             List<int> testIDs = GetAvailableTestsID(profileID);
-            List<object[]> testPreviews = new List<object[]>();
+            List<List<object>> testPreviews = new List<List<object>>();
             if (testIDs.Count != 0)
             {
                 using (SQLiteConnection con = new SQLiteConnection(Properties.Settings.Default.db_TestloConnectionString))
@@ -246,56 +246,96 @@ namespace TServer.Generic
                         SQLiteDataReader reader = cmd.ExecuteReader();
                         while (reader.Read())
                         {
-                            testPreviews.Add(new object[] { reader.GetValue(0), reader.GetValue(1), reader.GetValue(2), reader.GetValue(3), reader.GetValue(4) });
+                            testPreviews.Add(new List<object> { reader.GetValue(0), reader.GetValue(1), reader.GetValue(2), reader.GetValue(3), reader.GetValue(4)});
                         }
+                        reader.Close();
 
+                        foreach(List<object> element in testPreviews)
+                        {
+                            cmd.CommandText = "SELECT t_Tag.ID FROM t_TestAndTag INNER JOIN t_Tag ON t_TestAndTag.IDTag = t_Tag.ID WHERE t_TestAndTag.IDTest = " + element[0];
+                            reader = cmd.ExecuteReader();
+                            List<int> tagIDs = new List<int>();
+                            while (reader.Read())
+                            {
+                                tagIDs.Add(Convert.ToInt32(reader.GetValue(0)));
+                            }
+                            reader.Close();
+                            element.Add(tagIDs);
+                        }
                     }
                 }
             }
             else
-                return new List<object[]>();
+                return new List<List<object>>();
             return testPreviews;
         }
 
-        public List<object[]> GetFailedTests(int profileID)
+        public List<List<object>> GetFailedTests(int profileID)
         {
-            List<object[]> testPreviews = new List<object[]>();
+            List<List<object>> testPreviews = new List<List<object>>();
             using (SQLiteConnection con = new SQLiteConnection(Properties.Settings.Default.db_TestloConnectionString))
             {
                 using (SQLiteCommand cmd = new SQLiteCommand(con))
                 {
                     con.Open();
-                    cmd.CommandText = "SELECT t_Test.ID, t_Test.Name, (SELECT COUNT(t_TestAndQuestionPage.ID) FROM t_TestAndQuestionPage WHERE t_TestAndQuestionPage.IDTest = t_Test.ID), t_Test.Time, t_Test.IDEvaluationType FROM t_Test INNER JOIN t_Result ON t_Test.ID = t_Result.IDTest WHERE t_Result.IDStatus = 2 and t_Result.IDProfile = " + profileID;
+                    cmd.CommandText = "SELECT distinct t_Test.ID, t_Test.Name, (SELECT COUNT(t_TestAndQuestionPage.ID) FROM t_TestAndQuestionPage WHERE t_TestAndQuestionPage.IDTest = t_Test.ID), t_Test.Time, t_Test.IDEvaluationType FROM t_Test INNER JOIN t_Result ON t_Test.ID = t_Result.IDTest INNER JOIN t_TestingHistory ON t_Result.IDTestingHistory = t_TestingHistory.ID WHERE t_TestingHistory.IsCompleted = 'n' AND t_Result.IDProfile = " + profileID;
                     SQLiteDataReader reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
-                        testPreviews.Add(new object[] { reader.GetValue(0), reader.GetValue(1), reader.GetValue(2), reader.GetValue(3), reader.GetValue(4) });
+                        testPreviews.Add(new List<object> { reader.GetValue(0), reader.GetValue(1), reader.GetValue(2), reader.GetValue(3), reader.GetValue(4) });
+                    }
+                    reader.Close();
+
+                    foreach (List<object> element in testPreviews)
+                    {
+                        cmd.CommandText = "SELECT t_Tag.ID FROM t_TestAndTag INNER JOIN t_Tag ON t_TestAndTag.IDTag = t_Tag.ID WHERE t_TestAndTag.IDTest = " + element[0];
+                        reader = cmd.ExecuteReader();
+                        List<int> tagIDs = new List<int>();
+                        while (reader.Read())
+                        {
+                            tagIDs.Add(Convert.ToInt32(reader.GetValue(0)));
+                        }
+                        reader.Close();
+                        element.Add(tagIDs);
                     }
                 }
             }
             return testPreviews;
         }
 
-        public List<object[]> GetComplitedTests(int profileID)
+        public List<List<object>> GetComplitedTests(int profileID)
         {
-            List<object[]> testPreviews = new List<object[]>();
+            List<List<object>> testPreviews = new List<List<object>>();
             using (SQLiteConnection con = new SQLiteConnection(Properties.Settings.Default.db_TestloConnectionString))
             {
                 using (SQLiteCommand cmd = new SQLiteCommand(con))
                 {
                     con.Open();
-                    cmd.CommandText = "SELECT t_Test.ID, t_Test.Name, (SELECT COUNT(t_TestAndQuestionPage.ID) FROM t_TestAndQuestionPage WHERE t_TestAndQuestionPage.IDTest = t_Test.ID), t_Test.Time, t_Test.IDEvaluationType FROM t_Test INNER JOIN t_Result ON t_Test.ID = t_Result.IDTest WHERE t_Result.IDStatus = 1 and t_Result.IDProfile = " + profileID;
+                    cmd.CommandText = "SELECT distinct t_Test.ID, t_Test.Name, (SELECT COUNT(t_TestAndQuestionPage.ID) FROM t_TestAndQuestionPage WHERE t_TestAndQuestionPage.IDTest = t_Test.ID), t_Test.Time, t_Test.IDEvaluationType FROM t_Test INNER JOIN t_Result ON t_Test.ID = t_Result.IDTest INNER JOIN t_TestingHistory ON t_Result.IDTestingHistory = t_TestingHistory.ID WHERE t_TestingHistory.IsCompleted = 'y' AND t_Result.IDProfile = " + profileID;
                     SQLiteDataReader reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
-                        testPreviews.Add(new object[] { reader.GetValue(0), reader.GetValue(1), reader.GetValue(2), reader.GetValue(3), reader.GetValue(4) });
+                        testPreviews.Add(new List<object> { reader.GetValue(0), reader.GetValue(1), reader.GetValue(2), reader.GetValue(3), reader.GetValue(4) });
+                    }
+                    reader.Close();
+                    foreach (List<object> element in testPreviews)
+                    {
+                        cmd.CommandText = "SELECT t_Tag.ID FROM t_TestAndTag INNER JOIN t_Tag ON t_TestAndTag.IDTag = t_Tag.ID WHERE t_TestAndTag.IDTest = " + element[0];
+                        reader = cmd.ExecuteReader();
+                        List<int> tagIDs = new List<int>();
+                        while (reader.Read())
+                        {
+                            tagIDs.Add(Convert.ToInt32(reader.GetValue(0)));
+                        }
+                        reader.Close();
+                        element.Add(tagIDs);
                     }
                 }
             }
             return testPreviews;
         }
 
-        public List<int> GetAvailableTestsID(int profileID)
+        private List<int> GetAvailableTestsID(int profileID)
         {
             List<int> testIds = new List<int>();
             using (SQLiteConnection con = new SQLiteConnection(Properties.Settings.Default.db_TestloConnectionString))
@@ -393,7 +433,7 @@ namespace TServer.Generic
 
                     }
                     reader.Close();
-                    bool canContinueAfterAbort = (returnData_Test[4].ToString() == "y" ? true : false);
+                    bool canContinueAfterAbort = (returnData_Test[3].ToString() == "y" ? true : false);
 
                     cmd.CommandText = "SELECT t_ShowAnswerType.ID FROM t_ShowAnswerType WHERE t_ShowAnswerType.ID = " + returnData_Test[7].ToString();
                     reader = cmd.ExecuteReader();
@@ -421,6 +461,34 @@ namespace TServer.Generic
                 }
             }
             return test;
+        }
+
+        public bool SaveProgress(int testID, double score, int skip, int profileID)
+        {
+            using (SQLiteConnection con = new SQLiteConnection(Properties.Settings.Default.db_TestloConnectionString))
+            {
+                using (SQLiteCommand cmd = new SQLiteCommand(con))
+                {
+                    con.Open();
+                    cmd.CommandText = "INSERT INTO t_SaveProgress(IDTest, IDProfile, Score, SkipQuestion) VALUES(" + testID + "," + profileID + "," + score + "," + skip + ")";
+                    cmd.ExecuteNonQuery();
+                }
+            }
+            return true;
+        }
+
+        public bool UserCompletedTest(int testID, int score, int profileID, bool isCompleted)
+        {
+            using (SQLiteConnection con = new SQLiteConnection(Properties.Settings.Default.db_TestloConnectionString))
+            {
+                using (SQLiteCommand cmd = new SQLiteCommand(con))
+                {
+                    con.Open();
+                    cmd.CommandText = "INSERT INTO t_TestingHistory(IDTest, IDProfile, Date, Value, IsCompleted) VALUES(" + testID + "," + profileID + ",'" + DateTime.Now.ToString("yyyy-MM-dd") + "'," + score + "," + (isCompleted ? "'y'" : "'n'") + ")";
+                    cmd.ExecuteNonQuery();
+                }
+            }
+            return true;
         }
     }
 }

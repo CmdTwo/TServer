@@ -24,6 +24,9 @@ namespace TServer.Common
         failedTests = 14,
         complitedTests = 15,
         test = 16,
-        testID = 17
+        testID = 17,
+        progress_score = 18,
+        progress_skip = 19,
+        isCompleted = 20
     }
 }
