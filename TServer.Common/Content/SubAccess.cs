@@ -17,6 +17,11 @@ namespace TServer.Common.Content
             Name = name;
         }
 
+        public SubAccess(string name)
+        {
+            Name = name;
+        }
+
         public object GetField(ContentParam param)
         {
             switch (param)

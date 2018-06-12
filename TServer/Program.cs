@@ -15,9 +15,9 @@ namespace TServer
             server.Launch();
 
             //DateTime dateTime = DateTime.Now;
-            //string date = dateTime.ToString("yyyy-MM-dd");
-            //dateTime = DateTime.ParseExact(date, "yyyy-MM-dd", CultureInfo.InvariantCulture);
-            //ServerConsole serverConsole = new ServerConsole();
+            //string date = dateTime.ToString("yyyy-MM-dd HH:mm:ss");
+            //dateTime = DateTime.ParseExact(date, "yyyy-MM-dd hh:mm:ss", CultureInfo.InvariantCulture);
+            ////ServerConsole serverConsole = new ServerConsole();
             Console.ReadKey();
         }
     }

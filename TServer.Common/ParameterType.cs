@@ -27,6 +27,22 @@ namespace TServer.Common
         testID = 17,
         progress_score = 18,
         progress_skip = 19,
-        isCompleted = 20
+        isCompleted = 20,
+        testIsCompleted = 21,
+        testHasUsedCount = 22,
+        testResultValue = 23,
+        questionCount = 24,
+        testTime = 25,
+        evaluationType = 26,
+        previewTestInfo = 27,
+        previewTestInfoList = 28,
+        positionInTopTestCompleted = 29,
+        newAccess = 30,
+        otherAccessIDList = 31,
+        newTagName = 32,
+        progress_time = 33,
+        testHaveSaveProgress = 34,
+        statisticList = 35,
+        testIDList = 36
     }
 }

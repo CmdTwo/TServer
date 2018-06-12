@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
@@ -10,6 +11,7 @@ namespace TServer
 {
     public class TClient
     {
+        private static Semaphore Semaphore = new Semaphore(1, 1);
         private int ProfileID;
         private DBManager DBManager;
         private Server Server;
@@ -33,6 +35,7 @@ namespace TServer
 
                 if ((bool)(message[ReceiveMessageParam.IsRequest]))
                 {
+                    Semaphore.WaitOne();
                     switch ((byte)message[ReceiveMessageParam.CommandType])
                     {
                         case ((byte)RequestCommand.Authorization):
@@ -87,7 +90,32 @@ namespace TServer
                             Log.Write("New request: " + RequestCommand.UserCompletedTest);
                             Request_UserCompletedTest(message[ReceiveMessageParam.Params] as Dictionary<ParameterType, object>);
                             break;
+                        case ((byte)RequestCommand.GetTestAndStats):
+                            Log.Write("New request: " + RequestCommand.GetTestAndStats);
+                            Request_GetTestAndStats(message[ReceiveMessageParam.Params] as Dictionary<ParameterType, object>);
+                            break;
+                        case ((byte)RequestCommand.AddNewAccess):
+                            Log.Write("New request: " + RequestCommand.AddNewAccess);
+                            Request_AddNewAccess(message[ReceiveMessageParam.Params] as Dictionary<ParameterType, object>);
+                            break;
+                        case ((byte)RequestCommand.AddNewTag):
+                            Log.Write("New request: " + RequestCommand.AddNewTag);
+                            Request_AddNewTag(message[ReceiveMessageParam.Params] as Dictionary<ParameterType, object>);
+                            break;
+                        case ((byte)RequestCommand.ContinueTest):
+                            Log.Write("New request: " + RequestCommand.ContinueTest);
+                            Request_ContinueTest(message[ReceiveMessageParam.Params] as Dictionary<ParameterType, object>);
+                            break;
+                        case ((byte)RequestCommand.GetStatistic):
+                            Log.Write("New request: " + RequestCommand.GetStatistic);
+                            Request_GetStatistic(message[ReceiveMessageParam.Params] as Dictionary<ParameterType, object>);
+                            break;
+                        case ((byte)RequestCommand.AddCollectTest):
+                            Log.Write("New request: " + RequestCommand.AddCollectTest);
+                            Request_AddCollectTest(message[ReceiveMessageParam.Params] as Dictionary<ParameterType, object>);
+                            break;
                     }
+                    Semaphore.Release();
                 }
                 else
                 {
@@ -222,7 +250,7 @@ namespace TServer
                             { ReceiveMessageParam.CommandType, ResponseCommand.GetAvailableTestsResponse },
                             { ReceiveMessageParam.IsRequest, false },
                             { ReceiveMessageParam.Params, new Dictionary<ParameterType, object> {
-                                { ParameterType.responseStatus, DBManager.GetAvailableTests(ProfileID) } } } };
+                                { ParameterType.previewTestInfoList, DBManager.GetAvailableTests(ProfileID) } } } };
 
             MessageManager messageManager = new MessageManager();
             byte[] bytes = messageManager.SerializeMessage(response);
@@ -274,7 +302,7 @@ namespace TServer
                             { ReceiveMessageParam.CommandType, ResponseCommand.SaveProgressResponse },
                             { ReceiveMessageParam.IsRequest, false },
                             { ReceiveMessageParam.Params, new Dictionary<ParameterType, object> {
-                                { ParameterType.responseStatus, DBManager.SaveProgress((int)args[ParameterType.testID], (double)args[ParameterType.progress_score], (int)args[ParameterType.progress_skip], ProfileID) } } } };
+                                { ParameterType.responseStatus, DBManager.SaveProgress((int)args[ParameterType.testID], (double)args[ParameterType.progress_score], (int)args[ParameterType.progress_skip], (double?)args[ParameterType.progress_time], ProfileID) } } } };
 
             MessageManager messageManager = new MessageManager();
             byte[] bytes = messageManager.SerializeMessage(response);
@@ -287,7 +315,101 @@ namespace TServer
                             { ReceiveMessageParam.CommandType, ResponseCommand.UserCompletedTestResponse },
                             { ReceiveMessageParam.IsRequest, false },
                             { ReceiveMessageParam.Params, new Dictionary<ParameterType, object> {
-                                { ParameterType.responseStatus, DBManager.UserCompletedTest((int)args[ParameterType.testID], (int)args[ParameterType.progress_score], ProfileID, (bool)args[ParameterType.isCompleted]) } } } };
+                                { ParameterType.responseStatus, DBManager.UserCompletedTest((int)args[ParameterType.testID], (int)args[ParameterType.progress_score], ProfileID, (bool)args[ParameterType.isCompleted], (string)args[ParameterType.progress_time]) } } } };
+
+            MessageManager messageManager = new MessageManager();
+            byte[] bytes = messageManager.SerializeMessage(response);
+            TcpClient.GetStream().Write(bytes, 0, bytes.Length);
+        }
+
+        private void Request_GetTestAndStats(Dictionary<ParameterType, object> args)
+        {
+            List<object> testAndStatsList = DBManager.GetTestAndStats((int)args[ParameterType.testID], ProfileID);
+
+            Dictionary<ReceiveMessageParam, object> response = new Dictionary<ReceiveMessageParam, object>() {
+                            { ReceiveMessageParam.CommandType, ResponseCommand.GetTestAndStatsResponse },
+                            { ReceiveMessageParam.IsRequest, false },
+                            { ReceiveMessageParam.Params, new Dictionary<ParameterType, object> {
+                                { ParameterType.test, testAndStatsList[0] },
+                                { ParameterType.testHaveSaveProgress, testAndStatsList[1] },
+                                { ParameterType.testIsCompleted, testAndStatsList.Count == 2 ? null : testAndStatsList[2] },
+                                { ParameterType.testResultValue, testAndStatsList.Count == 2 ? null : testAndStatsList[3] },
+                                { ParameterType.positionInTopTestCompleted, testAndStatsList.Count == 2 ? null : testAndStatsList[4] }                                
+                            } } };
+
+            MessageManager messageManager = new MessageManager();
+            byte[] bytes = messageManager.SerializeMessage(response);
+            TcpClient.GetStream().Write(bytes, 0, bytes.Length);
+        }
+
+        private void Request_AddNewAccess(Dictionary<ParameterType, object> args)
+        {            
+            Dictionary<ReceiveMessageParam, object> response = new Dictionary<ReceiveMessageParam, object>() {
+                            { ReceiveMessageParam.CommandType, ResponseCommand.AddNewAccessResponse },
+                            { ReceiveMessageParam.IsRequest, false },
+                            { ReceiveMessageParam.Params, new Dictionary<ParameterType, object> {
+                                { ParameterType.responseStatus, DBManager.AddNewAccess((Access)args[ParameterType.newAccess], (List<int>)args[ParameterType.otherAccessIDList]) }            
+                            } } };
+
+            MessageManager messageManager = new MessageManager();
+            byte[] bytes = messageManager.SerializeMessage(response);
+            TcpClient.GetStream().Write(bytes, 0, bytes.Length);
+        }
+
+        private void Request_AddNewTag(Dictionary<ParameterType, object> args)
+        {
+            Dictionary<ReceiveMessageParam, object> response = new Dictionary<ReceiveMessageParam, object>() {
+                            { ReceiveMessageParam.CommandType, ResponseCommand.AddNewTagResponse },
+                            { ReceiveMessageParam.IsRequest, false },
+                            { ReceiveMessageParam.Params, new Dictionary<ParameterType, object> {
+                                { ParameterType.responseStatus, DBManager.AddNewTag((string)args[ParameterType.newTagName]) }
+                            } } };
+
+            MessageManager messageManager = new MessageManager();
+            byte[] bytes = messageManager.SerializeMessage(response);
+            TcpClient.GetStream().Write(bytes, 0, bytes.Length);
+        }
+
+        private void Request_ContinueTest(Dictionary<ParameterType, object> args)
+        {
+            List<object> result = DBManager.ContinueTest((int)args[ParameterType.testID], ProfileID);
+
+            Dictionary<ReceiveMessageParam, object> response = new Dictionary<ReceiveMessageParam, object>() {
+                            { ReceiveMessageParam.CommandType, ResponseCommand.ContinueTestResponse },
+                            { ReceiveMessageParam.IsRequest, false },
+                            { ReceiveMessageParam.Params, new Dictionary<ParameterType, object> {
+                                { ParameterType.progress_score, result[0] },
+                                { ParameterType.progress_skip, result[1] },
+                                { ParameterType.progress_time, result[2] }
+                            } } };
+
+            MessageManager messageManager = new MessageManager();
+            byte[] bytes = messageManager.SerializeMessage(response);
+            TcpClient.GetStream().Write(bytes, 0, bytes.Length);
+        }
+
+        private void Request_GetStatistic(Dictionary<ParameterType, object> args)
+        {
+            Dictionary<ReceiveMessageParam, object> response = new Dictionary<ReceiveMessageParam, object>() {
+                            { ReceiveMessageParam.CommandType, ResponseCommand.GetStatisticResponse },
+                            { ReceiveMessageParam.IsRequest, false },
+                            { ReceiveMessageParam.Params, new Dictionary<ParameterType, object> {
+                                { ParameterType.statisticList, DBManager.GetStatistic() }
+                            } } };
+
+            MessageManager messageManager = new MessageManager();
+            byte[] bytes = messageManager.SerializeMessage(response);
+            TcpClient.GetStream().Write(bytes, 0, bytes.Length);
+        }
+
+        private void Request_AddCollectTest(Dictionary<ParameterType, object> args)
+        {
+            Dictionary<ReceiveMessageParam, object> response = new Dictionary<ReceiveMessageParam, object>() {
+                            { ReceiveMessageParam.CommandType, ResponseCommand.AddCollectTestResponse },
+                            { ReceiveMessageParam.IsRequest, false },
+                            { ReceiveMessageParam.Params, new Dictionary<ParameterType, object> {
+                                { ParameterType.responseStatus, DBManager.AddCollectTest((Test)args[ParameterType.test], (List<int>)args[ParameterType.testIDList], ProfileID) }
+                            } } };
 
             MessageManager messageManager = new MessageManager();
             byte[] bytes = messageManager.SerializeMessage(response);

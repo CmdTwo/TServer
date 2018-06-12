@@ -20,6 +20,13 @@ namespace TServer.Common.Content
             SubAccesses = new List<SubAccess>();
         }
 
+        public Access( string name, string faIcon)
+        {
+            Name = name;
+            FaIcon = faIcon;
+            SubAccesses = new List<SubAccess>();
+        }
+
         public object GetField(ContentParam param)
         {
             switch(param)

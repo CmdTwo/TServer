@@ -21,7 +21,9 @@ namespace TServer.Common.Content
         header = 11,
         questionText = 12,
         answerList = 13,
-        questionPageTemplate = 14
+        questionPageTemplate = 14,
+        testIDListAndQuestionCount = 15
+
 
     }
 }

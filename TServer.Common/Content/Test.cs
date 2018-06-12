@@ -14,7 +14,7 @@ namespace TServer.Common.Content
         public Profile Profile { get; }
         public List<Access> AccessList { get; private set; }
         public List<Tag> TagList { get; private set; }
-        public DateTime Time { get; private set; }
+        public TimeSpan Time { get; private set; }
         public bool CanContinueAfterAbort { get; private set; }
         public Evaluation Evaluation { get; private set; }
         public int ShowAnswerMode { get; private set; }
@@ -25,27 +25,27 @@ namespace TServer.Common.Content
 
         }
 
-        public Test(int id, string name, Profile profile, List<Access> accesses, List<Tag> tags, DateTime time, bool canContinue, Evaluation evaluation, int showAnswerMode, List<Question> questionPages)
+        public Test(int id, string name, Profile profile, List<Access> accesses, List<Tag> tags, int minutes, bool canContinue, Evaluation evaluation, int showAnswerMode, List<Question> questionPages)
         {
             ID = id;
             Name = name;
             Profile = profile;
             AccessList = accesses;
             TagList = tags;
-            Time = time;
+            Time = new TimeSpan(0, minutes, 0);
             CanContinueAfterAbort = canContinue;
             Evaluation = evaluation;
             ShowAnswerMode = showAnswerMode;
             QuestionPageList = questionPages;
         }
 
-        public Test(string name, Profile profile, List<Access> accesses, List<Tag> tags, DateTime time, bool canContinue, Evaluation evaluation, int showAnswerMode, List<Question> questionPages)
+        public Test(string name, Profile profile, List<Access> accesses, List<Tag> tags, int minutes, bool canContinue, Evaluation evaluation, int showAnswerMode, List<Question> questionPages)
         {
             Name = name;
             Profile = profile;
             AccessList = accesses;
             TagList = tags;
-            Time = time;
+            Time = new TimeSpan(0, minutes, 0);
             CanContinueAfterAbort = canContinue;
             Evaluation = evaluation;
             ShowAnswerMode = showAnswerMode;
@@ -71,7 +71,7 @@ namespace TServer.Common.Content
                     TagList = (List<Tag>)obj;
                     break;
                 case (ContentParam.time):
-                    Time = (DateTime)obj;
+                    Time = new TimeSpan(0, Convert.ToInt32(obj), 0);
                     break;
                 case (ContentParam.canContinueAfterAbort):
                     CanContinueAfterAbort = (bool)obj;

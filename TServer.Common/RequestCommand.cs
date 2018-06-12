@@ -21,5 +21,11 @@ namespace TServer.Common
         GetTest = 11,
         UserCompletedTest = 12,
         SaveProgress = 13,
+        GetTestAndStats = 14,
+        AddNewAccess = 15,
+        AddNewTag = 16,
+        ContinueTest = 17,
+        GetStatistic = 18,
+        AddCollectTest = 19
     }
 }

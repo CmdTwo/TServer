@@ -48,6 +48,7 @@
     <Compile Include="Content\Profile.cs" />
     <Compile Include="Content\Question.cs" />
     <Compile Include="Content\Result.cs" />
+    <Compile Include="Content\StatsObject.cs" />
     <Compile Include="Content\SubAccess.cs" />
     <Compile Include="Content\Tag.cs" />
     <Compile Include="Content\Test.cs" />

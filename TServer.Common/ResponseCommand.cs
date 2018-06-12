@@ -20,7 +20,13 @@ namespace TServer.Common
         GetComplitedTestsResponse = 10,
         GetTestResponse = 11,
         SaveProgressResponse = 12,
-        UserCompletedTestResponse = 13
+        UserCompletedTestResponse = 13,
+        GetTestAndStatsResponse = 14,
+        AddNewAccessResponse = 15,
+        AddNewTagResponse = 16,
+        ContinueTestResponse = 17,
+        GetStatisticResponse = 18,
+        AddCollectTestResponse = 19
 
     }
 }
